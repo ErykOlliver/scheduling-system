@@ -166,3 +166,13 @@ A ideia é simples:
 Se bem estruturado, esse tipo de projeto vira facilmente um produto comercial.
 
 ---
+
+## 🛠️ Instruções
+
+### 📦 Instalação
+
+Para utilizar o projeto localmente, execute os seguintes comandos:
+
+```bash
+pnpm install
+pnpm prisma generate
