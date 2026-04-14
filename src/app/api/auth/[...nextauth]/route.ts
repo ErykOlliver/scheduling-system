@@ -13,21 +13,21 @@ export const authOptions: NextAuthOptions = {
         Credentials({
             name: 'Login',
             credentials: {
-                login: { label: "e-mail", type: 'text' },
-                key: { label: 'senha', type: 'password' },
+                email: { label: "e-mail", type: 'text' },
+                password: { label: 'senha', type: 'password' },
             },
             async authorize(credentials) {
-                if (!credentials?.login || !credentials.key) return null
+                if (!credentials?.email || !credentials.password) return null
 
                 const user = await prisma.user.findUnique({
                     where: {
-                        mail: credentials.login,
+                        mail: credentials.email,
                     }
                 })
 
                 if (!user) throw new Error("Usuario não encontrado na nossa base de dados")
 
-                const isValid = await argon2.verify(user.password, credentials.key)
+                const isValid = await argon2.verify(user.password, credentials.password)
 
                 if (!isValid) throw new Error("Senha incorreta")
 
