@@ -2,6 +2,7 @@ import prisma from '@/src/shared/lib/prisma'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
 import argon2 from 'argon2'
+import { NextResponse } from 'next/server'
 
 export const authOptions: NextAuthOptions = {
     session: {
@@ -31,10 +32,29 @@ export const authOptions: NextAuthOptions = {
 
                 if (!isValid) throw new Error("Senha incorreta")
 
-                return user
+
+                return {
+                    ...user,
+                    email: user.mail,
+                    admin_level: user.admin_level
+                }
             }
         })
-    ]
+    ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user) {
+                token.admin_level = user.admin_level
+            }
+            return token
+        },
+        async session({session, token}) {
+            if(session.user){
+                session.user.admin_level = token.admin_level
+            }
+            return session
+        }
+    }
 }
 
 const handler = NextAuth(authOptions)

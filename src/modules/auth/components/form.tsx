@@ -2,13 +2,17 @@
 
 import { fetchSignUp } from '@/src/shared/api/auth/auth'
 import { signIn } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 type formType = "SignIn" | "SignUp"
 
 
 export default function FormAuth() {
-    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) =>{
+    const router = useRouter()
+    const [loading, setLoading] = useState(false)
+
+    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
         const formData = new FormData(e.currentTarget)
@@ -25,8 +29,9 @@ export default function FormAuth() {
 
     }
 
-    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) =>{
+    const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        setLoading(true)
 
         const formData = new FormData(e.currentTarget)
 
@@ -35,11 +40,15 @@ export default function FormAuth() {
             email: formData.get("email") as string,
             password: formData.get("password") as string
         })
-        
-        console.log(result)
 
+        if(result?.error) setLoading(false)
+
+        if (result?.ok) {
+            setLoading(false)
+            router.push("/")
+        }
     }
-    
+
     const [formTypes, setFormType] = useState<formType>("SignIn")
     const renderForm = () => {
         switch (formTypes) {
@@ -53,7 +62,7 @@ export default function FormAuth() {
                         <input type="text" name="email" id="email" className='border border-zinc-700 focus:border-white text-md rounded-md p-1 text-white/90 focus:outline-none' />
                         <label id='password' className='text-white text-lg'>Senha</label>
                         <input type="password" name="password" id="password" className='border border-zinc-700 focus:border-white text-md rounded-md p-1 text-white/90 focus:outline-none' />
-                        <button className='w-full h-fit py-3 hover:cursor-pointer font-medium text-white bg-orange-700 rounded-md'>Entrar</button>
+                        <button className='w-full h-fit py-3 hover:cursor-pointer font-medium text-white bg-orange-700 rounded-md'>{loading ? "Carregando" : "Entrar"}</button>
                         <p className='text-center text-white'>Não possui uma conta ? <span onClick={() => setFormType("SignUp")} className='text-orange-600' >Cadastre-se</span></p>
                     </form>
                 </div>
