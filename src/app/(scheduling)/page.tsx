@@ -1,4 +1,3 @@
-
 import Scheduling from '@/src/modules/scheduling/page'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../api/auth/[...nextauth]/route'
